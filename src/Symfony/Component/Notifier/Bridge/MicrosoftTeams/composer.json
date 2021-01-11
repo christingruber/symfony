@@ -1,0 +1,23 @@
+{
+    "name": "symfony/microsoft-teams",
+    "description": "Symfony Microsoft Teams Notifier Bridge",
+    "type": "symfony-bridge",
+    "require": {
+        "symfony/http-client": "4.3|^5.0",
+        "symfony/notifier": "^5.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christin Gruber",
+            "email": "c.gruber@touchdesign.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Symfony\\Component\\Notifier\\Bridge\\MicrosoftTeams\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "minimum-stability": "dev"
+}
