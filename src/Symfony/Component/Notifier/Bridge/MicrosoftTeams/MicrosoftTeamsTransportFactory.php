@@ -29,9 +29,9 @@ final class MicrosoftTeamsTransportFactory extends AbstractTransportFactory
             throw new UnsupportedSchemeException($dsn, 'microsoftteams', $this->getSupportedSchemes());
         }
 
-        // @todo implement
-
-        return new MicrosoftTeamsTransport($this->client, $this->dispatcher);
+        return (new MicrosoftTeamsTransport($this->client, $this->dispatcher))
+            ->setHost($dsn->getHost())
+            ->setPort($dsn->getPort());
     }
 
     protected function getSupportedSchemes(): array

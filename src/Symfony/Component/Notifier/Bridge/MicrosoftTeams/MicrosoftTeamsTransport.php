@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Notifier\Bridge\MicrosoftTeams;
 
+use Symfony\Component\Notifier\Exception\TransportException;
 use Symfony\Component\Notifier\Exception\UnsupportedMessageTypeException;
 use Symfony\Component\Notifier\Message\ChatMessage;
 use Symfony\Component\Notifier\Message\MessageInterface;
@@ -31,7 +32,7 @@ final class MicrosoftTeamsTransport extends AbstractTransport
 
     public function __toString(): string
     {
-        return sprintf( /* @todo some things */);
+        return sprintf('microsoftteams://%s', $this->getEndpoint());
     }
 
     public function supports(MessageInterface $message): bool
@@ -45,7 +46,29 @@ final class MicrosoftTeamsTransport extends AbstractTransport
             throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
         }
 
-        // @todo Implement
+        $options = $message->getOptions() ?? [];
+        $options['text'] = $message->getSubject();
+
+        // @todo title, themeColor
+        // @todo build the full endpoint
+
+        $webhook = sprintf('https://%s', $this->getEndpoint());
+
+        $response = $this->client->request('POST', $webhook, [
+            'json' => array_filter($options),
+        ]);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new TransportException(sprintf('Unable to post the Microsoft Teams message: "%s".', $result['error']['message'] ?? $response->getContent(false)), $response, $result['error']['code'] ?? $response->getStatusCode());
+        }
+
+        $result = $response->toArray(false);
+
+        // @todo debug and remove
+        dump($result);
+
+        $sentMessage = new SentMessage($message, (string) $this);
+        $sentMessage->setMessageId($result['id']);
 
         return $sentMessage;
     }
