@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Notifier\Bridge\MicrosoftTeams;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Notifier\Exception\TransportException;
 use Symfony\Component\Notifier\Exception\UnsupportedMessageTypeException;
 use Symfony\Component\Notifier\Message\ChatMessage;
@@ -60,11 +61,20 @@ final class MicrosoftTeamsTransport extends AbstractTransport
             'json' => array_filter($options),
         ]);
 
-        if (200 !== $response->getStatusCode()) {
+        try {
+            $result = $response->toArray(false);
+        } catch (\Exception $exception) {
+            throw new TransportException('Unable to post the Microsoft Teams message: Invalid response.', $response->getStatusCode(), $exception->getMessage());
+        }
+
+        $statusCode = $response->getStatusCode();
+        if (Response::HTTP_OK !== $statusCode) {
             throw new TransportException(sprintf('Unable to post the Microsoft Teams message: "%s".', $result['error']['message'] ?? $response->getContent(false)), $response, $result['error']['code'] ?? $response->getStatusCode());
         }
 
-        $result = $response->toArray(false);
+        if (!\array_key_exists('name', $result)) {
+            throw new TransportException(sprintf('Unable to post the Google Chat message: "%s".', $response->getContent(false)), $response);
+        }
 
         // @todo debug and remove
         dump($result);
