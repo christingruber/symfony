@@ -37,7 +37,7 @@ final class MicrosoftTeamsTransport extends AbstractTransport
 
     public function supports(MessageInterface $message): bool
     {
-        return $message instanceof ChatMessage;
+        return $message instanceof ChatMessage && (null === $message->getOptions() || $message->getOptions() instanceof MicrosoftTeamsOptions);
     }
 
     protected function doSend(MessageInterface $message): SentMessage
