@@ -30,14 +30,17 @@ final class MicrosoftTeamsOptions implements MessageOptionsInterface
     {
         $options = new self();
 
-        // @todo implement
+        $options['text'] = $notification->getSubject();
 
         return $options;
     }
 
     public function toArray(): array
     {
-        return $this->options;
+        return array_merge($this->options, [
+            '@context' => 'http://schema.org/extensions',
+            '@type' => 'MessageCard',
+        ]);
     }
 
     public function title(string $title): self

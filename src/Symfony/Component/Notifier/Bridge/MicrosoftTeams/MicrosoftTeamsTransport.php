@@ -47,7 +47,10 @@ final class MicrosoftTeamsTransport extends AbstractTransport
         }
 
         $options = $message->getOptions() ?? [];
-        $options['text'] = $message->getSubject();
+
+        // @todo debug and remove
+
+        dump($options);
 
         // @todo build the full endpoint
 
