@@ -49,7 +49,6 @@ final class MicrosoftTeamsTransport extends AbstractTransport
         $options = $message->getOptions() ?? [];
         $options['text'] = $message->getSubject();
 
-        // @todo title, themeColor
         // @todo build the full endpoint
 
         $webhook = sprintf('https://%s', $this->getEndpoint());
