@@ -84,7 +84,8 @@ final class MicrosoftTeamsTransport extends AbstractTransport
 
     protected function getEndpoint(): ?string
     {
-        return sprintf('https://%s:%s%s',
+        return sprintf(
+            'https://%s:%s%s',
             $this->host,
             $this->port ?? '443',
             $this->path ?? ''
