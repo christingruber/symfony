@@ -26,6 +26,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class MicrosoftTeamsTransport extends AbstractTransport
 {
+    /**
+     * @var Response
+     */
+    protected $response;
+
+    /**
+     * @var string Webhook connector path.
+     */
     protected $path;
 
     public function __construct(HttpClientInterface $client = null, EventDispatcherInterface $dispatcher = null)
@@ -60,13 +68,12 @@ final class MicrosoftTeamsTransport extends AbstractTransport
             $options['text'] = $message->getSubject();
         }
 
-        $response = $this->client->request('POST', $this->getEndpoint(), [
+        $this->response = $this->client->request('POST', $this->getEndpoint(), [
             'json' => array_filter($options),
         ]);
 
-        $statusCode = $response->getStatusCode();
-        if (Response::HTTP_OK != $statusCode) {
-            throw new TransportException(sprintf('Unable to post the Microsoft Teams message, status code is "%d" expected was "%s". Error message is: %s.', $statusCode, Response::HTTP_OK, $response->getContent(false)), $response);
+        if ($error = $this->hasError()) {
+            throw new TransportException(sprintf('Unable to post the Microsoft Teams message, status code is "%d" expected was "%s". Error message is: %s.', $error['statusCode'], Response::HTTP_OK, $error['message']), $this->response);
         }
 
         return new SentMessage($message, (string) $this);
@@ -87,8 +94,24 @@ final class MicrosoftTeamsTransport extends AbstractTransport
         return sprintf(
             'https://%s:%s%s',
             $this->host,
-            $this->port ?? '443',
+            $this->port ?? '443', // @todo replace
             $this->path ?? ''
         );
     }
+
+    protected function hasError():?array
+    {
+        $statusCode = $this->response->getStatusCode();
+        $content = $this->response->getContent(false) ?? 'Unknown error.';
+
+        if (Response::HTTP_OK != $statusCode || 1 != $content) {
+            return [
+                'statusCode' => $statusCode,
+                'message' => $content
+            ];
+        }
+
+        return null;
+    }
+
 }
