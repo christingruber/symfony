@@ -28,9 +28,9 @@ final class MicrosoftTeamsOptions implements MessageOptionsInterface
 
     public static function fromNotification(Notification $notification): self
     {
-        $options = new self();
-
-        $options['text'] = $notification->getSubject();
+        $options = new self(
+            ['text' => $notification->getSubject()]
+        );
 
         return $options;
     }

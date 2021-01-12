@@ -24,17 +24,18 @@ final class MicrosoftTeamsTransportFactory extends AbstractTransportFactory
     public function create(Dsn $dsn): TransportInterface
     {
         $scheme = $dsn->getScheme();
-
         if ('microsoftteams' !== $scheme) {
             throw new UnsupportedSchemeException($dsn, 'microsoftteams', $this->getSupportedSchemes());
         }
 
         $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();
         $port = $dsn->getPort();
+        $path = $dsn->getPath();
 
         return (new MicrosoftTeamsTransport($this->client, $this->dispatcher))
             ->setHost($host)
-            ->setPort($port);
+            ->setPort($port)
+            ->setPath($path);
     }
 
     protected function getSupportedSchemes(): array

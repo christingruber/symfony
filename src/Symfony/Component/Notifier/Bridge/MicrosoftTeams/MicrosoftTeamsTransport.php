@@ -26,6 +26,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class MicrosoftTeamsTransport extends AbstractTransport
 {
+    protected $path;
+
     public function __construct(HttpClientInterface $client = null, EventDispatcherInterface $dispatcher = null)
     {
         parent::__construct($client, $dispatcher);
@@ -47,41 +49,45 @@ final class MicrosoftTeamsTransport extends AbstractTransport
             throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
         }
 
-        $options = $message->getOptions() ?? [];
+        $options = $message->getOptions();
+        if ($options && !$message->getOptions() instanceof MicrosoftTeamsOptions) {
+            throw new \LogicException(sprintf('The "%s" transport only supports instances of "%s" for options.', __CLASS__, MicrosoftTeamsOptions::class));
+        }
 
-        // @todo debug and remove
+        if (!$options && $notification = $message->getNotification()) {
+            $options = $options = MicrosoftTeamsOptions::fromNotification($notification) ? $options->toArray() : [];
+        } else {
+            $options['text'] = $message->getSubject();
+        }
 
-        dump($options);
-
-        // @todo build the full endpoint
-
-        $webhook = sprintf('https://%s', $this->getEndpoint());
-
-        $response = $this->client->request('POST', $webhook, [
+        $response = $this->client->request('POST', $this->getEndpoint(), [
             'json' => array_filter($options),
         ]);
 
-        try {
-            $result = $response->toArray(false);
-        } catch (\Exception $exception) {
-            throw new TransportException('Unable to post the Microsoft Teams message: Invalid response.', $response->getStatusCode(), $exception->getMessage());
-        }
-
         $statusCode = $response->getStatusCode();
-        if (Response::HTTP_OK !== $statusCode) {
-            throw new TransportException(sprintf('Unable to post the Microsoft Teams message: "%s".', $result['error']['message'] ?? $response->getContent(false)), $response, $result['error']['code'] ?? $response->getStatusCode());
+        if (Response::HTTP_OK != $statusCode) {
+            throw new TransportException(sprintf('Unable to post the Microsoft Teams message, status code is "%d" expected was "%s". Error message is: %s.', $statusCode, Response::HTTP_OK, $response->getContent(false)), $response);
         }
 
-        if (!\array_key_exists('name', $result)) {
-            throw new TransportException(sprintf('Unable to post the Google Chat message: "%s".', $response->getContent(false)), $response);
-        }
+        return new SentMessage($message, (string) $this);
+    }
 
-        // @todo debug and remove
-        dump($result);
+    /**
+     * @return $this
+     */
+    public function setPath(?string $path): self
+    {
+        $this->path = $path;
 
-        $sentMessage = new SentMessage($message, (string) $this);
-        $sentMessage->setMessageId($result['id']);
+        return $this;
+    }
 
-        return $sentMessage;
+    protected function getEndpoint(): ?string
+    {
+        return sprintf('https://%s:%s%s',
+            $this->host,
+            $this->port ?? '443',
+            $this->path ?? ''
+        );
     }
 }
