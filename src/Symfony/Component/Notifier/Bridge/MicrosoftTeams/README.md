@@ -7,8 +7,11 @@ DSN example
 -----------
 
 ```
-MICROSOFT_TEAMS_DSN=default?webhook=XXX@XXX/IncomingWebhook/XXX/XXX
+MICROSOFT_TEAMS_DSN=default/WEBHOOK
 ```
+
+where:
+- `WEBHOOK` is your full webhook path `webhook/XXXX@XXXX/IncomingWebhook/XXXX/XXXX
 
 Resources
 ---------
