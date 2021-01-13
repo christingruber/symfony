@@ -2,6 +2,8 @@
     "name": "symfony/microsoft-teams-notifier",
     "description": "Symfony Microsoft Teams Notifier Bridge",
     "type": "symfony-bridge",
+    "keywords": ["teams", "microsoft", "notifier"],
+    "homepage": "https://symfony.com",
     "require": {
         "symfony/http-client": "4.3|^5.0",
         "symfony/notifier": "^5.2"

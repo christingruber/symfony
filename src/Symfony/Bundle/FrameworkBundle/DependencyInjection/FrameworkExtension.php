@@ -110,6 +110,7 @@ use Symfony\Component\Notifier\Bridge\Infobip\InfobipTransportFactory;
 use Symfony\Component\Notifier\Bridge\Iqsms\IqsmsTransportFactory;
 use Symfony\Component\Notifier\Bridge\LinkedIn\LinkedInTransportFactory;
 use Symfony\Component\Notifier\Bridge\Mattermost\MattermostTransportFactory;
+use Symfony\Component\Notifier\Bridge\MicrosoftTeams\MicrosoftTeamsTransportFactory;
 use Symfony\Component\Notifier\Bridge\Mobyt\MobytTransportFactory;
 use Symfony\Component\Notifier\Bridge\Nexmo\NexmoTransportFactory;
 use Symfony\Component\Notifier\Bridge\OvhCloud\OvhCloudTransportFactory;
@@ -2236,6 +2237,7 @@ class FrameworkExtension extends Extension
             SendinblueNotifierTransportFactory::class => 'notifier.transport_factory.sendinblue',
             DiscordTransportFactory::class => 'notifier.transport_factory.discord',
             LinkedInTransportFactory::class => 'notifier.transport_factory.linkedin',
+            MicrosoftTeamsTransportFactory::class => 'notifier.transport_factory.microsoftteams',
         ];
 
         foreach ($classToServices as $class => $service) {

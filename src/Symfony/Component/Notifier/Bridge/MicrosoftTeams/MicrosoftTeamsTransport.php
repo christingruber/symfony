@@ -26,6 +26,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 final class MicrosoftTeamsTransport extends AbstractTransport
 {
+    protected const HOST = 'outlook.office.com';
+
     /**
      * @var Response
      */

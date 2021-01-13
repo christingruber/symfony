@@ -88,6 +88,10 @@ class UnsupportedSchemeException extends LogicException
             'class' => Bridge\Discord\DiscordTransportFactory::class,
             'package' => 'symfony/discord-notifier',
         ],
+        'microsoftteams' => [
+            'class' => Bridge\MicrosoftTeams\MicrosoftTeamsTransportFactory::class,
+            'package' => 'symfony/microsoft-teams-notifier',
+        ],
     ];
 
     /**
