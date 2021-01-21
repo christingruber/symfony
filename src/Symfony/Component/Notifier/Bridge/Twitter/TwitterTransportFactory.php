@@ -25,16 +25,18 @@ final class TwitterTransportFactory extends AbstractTransportFactory
     {
         $scheme = $dsn->getScheme();
 
-        if ('gitter' !== $scheme) {
-            throw new UnsupportedSchemeException($dsn, 'gitter', $this->getSupportedSchemes());
+        if ('twitter' !== $scheme) {
+            throw new UnsupportedSchemeException($dsn, 'twitter', $this->getSupportedSchemes());
         }
 
         $token = $this->getUser($dsn);
-        $roomId = $dsn->getRequiredOption('room_id');
+        $consumerKey = $dsn->getRequiredOption('consumer_key');
+        $consumerSecret = $dsn->getRequiredOption('consumer_secret');
+        $secret = $dsn->getRequiredOption('secret');
         $host = 'default' === $dsn->getHost() ? null : $dsn->getHost();
         $port = $dsn->getPort();
 
-        return (new TwitterTransport($token, $roomId, $this->client, $this->dispatcher))->setHost($host)->setPort($port);
+        return (new TwitterTransport($token, $secret, $consumerKey, $consumerSecret, $this->client, $this->dispatcher))->setHost($host)->setPort($port);
     }
 
     protected function getSupportedSchemes(): array

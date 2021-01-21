@@ -29,19 +29,23 @@ final class TwitterTransport extends AbstractTransport
     protected const HOST = 'api.twitter.com';
 
     private $token;
-    private $roomId;
+    private $secret;
+    private $consumerKey;
+    private $consumerSecret;
 
-    public function __construct(string $token, string $roomId, HttpClientInterface $client = null, EventDispatcherInterface $dispatcher = null)
+    public function __construct(string $token, string $secret, string $consumerKey, string $consumerSecret, HttpClientInterface $client = null, EventDispatcherInterface $dispatcher = null)
     {
         $this->token = $token;
-        $this->roomId = $roomId;
+        $this->secret = $secret;
+        $this->consumerKey = $consumerKey;
+        $this->consumerSecret = $consumerSecret;
 
         parent::__construct($client, $dispatcher);
     }
 
     public function __toString(): string
     {
-        return sprintf('twitter://%s?room_id=%s', $this->getEndpoint(), $this->roomId);
+        return sprintf('twitter://%s?consumer_key=%s&consumer_secret=%s&secret=%s', $this->getEndpoint(), $this->consumerKey, $this->consumerKey, $this->secret);
     }
 
     public function supports(MessageInterface $message): bool
@@ -50,7 +54,7 @@ final class TwitterTransport extends AbstractTransport
     }
 
     /**
-     * @see https://developer.gitter.im/docs/rest-api
+     * @see https://developer.twitter.com/en/docs/api-reference-index#twitter-api-v1
      */
     protected function doSend(MessageInterface $message): SentMessage
     {
@@ -58,13 +62,20 @@ final class TwitterTransport extends AbstractTransport
             throw new UnsupportedMessageTypeException(__CLASS__, ChatMessage::class, $message);
         }
 
-        $endpoint = sprintf('https://%s/1.1/direct_messages/new.json', $this->getEndpoint(), $this->roomId);
+        $endpoint = sprintf('https://%s/1.1/direct_messages/events/new.json', $this->getEndpoint());
 
         $response = $this->client->request('POST', $endpoint, [
-            'auth_bearer' => $this->token,
+            'authorization' => $this->generateAuthorizationHeader(),
             'json' => [
-                'screen_name' => '@ChristinGruber',
-                'text' => $message->getSubject(),
+                'event' => [
+                    'type' => 'message_create',
+                    'message_create' => [
+                        'target' => [
+                            'recipient_id' => $message->getRecipientId(),
+                            'message_data' => $message->getSubject(),
+                        ],
+                    ],
+                ],
             ],
         ]);
 
@@ -78,5 +89,16 @@ final class TwitterTransport extends AbstractTransport
         $sentMessage->setMessageId($result['id']);
 
         return $sentMessage;
+    }
+
+    private function generateAuthorizationHeader(): string
+    {
+        return sprintf(
+            'OAuth oauth_consumer_key="%s", oauth_nonce="%s", oauth_signature="%s", oauth_signature_method="HMAC-SHA1", oauth_timestamp="%", oauth_token="%s", oauth_version="1.0"',
+            $this->consumerKey,
+            NONCE,
+            SIGNATURE,
+            time(),
+            $this->token);
     }
 }

@@ -26,12 +26,12 @@ final class TwitterTransportTest extends TransportTestCase
 {
     public function createTransport(?HttpClientInterface $client = null): TransportInterface
     {
-        return (new TwitterTransport('token', '5539a3ee5etest0d3255bfef', $client ?: $this->createMock(HttpClientInterface::class)))->setHost('api.gitter.im');
+        return (new TwitterTransport('token', '5539a3ee5etest0d3255bfef', $client ?: $this->createMock(HttpClientInterface::class)))->setHost('api.twitter.com');
     }
 
     public function toStringProvider(): iterable
     {
-        yield ['twitter://api.gitter.im?room_id=5539a3ee5etest0d3255bfef', $this->createTransport()];
+        yield ['twitter://api.twitter.com?room_id=5539a3ee5etest0d3255bfef', $this->createTransport()];
     }
 
     public function supportedMessagesProvider(): iterable

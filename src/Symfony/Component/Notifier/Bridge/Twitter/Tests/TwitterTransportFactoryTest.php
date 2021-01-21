@@ -28,8 +28,8 @@ final class TwitterTransportFactoryTest extends TransportFactoryTestCase
     public function createProvider(): iterable
     {
         yield [
-            'twitter://api.gitter.im?room_id=5539a3ee5etest0d3255bfef',
-            'twitter://token@api.gitter.im?room_id=5539a3ee5etest0d3255bfef',
+            'twitter://api.twitter.com?room_id=5539a3ee5etest0d3255bfef',
+            'twitter://token@api.twitter.com?room_id=5539a3ee5etest0d3255bfef',
         ];
     }
 
@@ -41,7 +41,7 @@ final class TwitterTransportFactoryTest extends TransportFactoryTestCase
 
     public function incompleteDsnProvider(): iterable
     {
-        yield 'missing token' => ['twitter://api.gitter.im?room_id=5539a3ee5etest0d3255bfef'];
+        yield 'missing token' => ['twitter://api.twitter.com?room_id=5539a3ee5etest0d3255bfef'];
     }
 
     public function missingRequiredOptionProvider(): iterable

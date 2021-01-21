@@ -1,18 +1,20 @@
 Twitter Notifier
 ===============
 
-Provides [Twitter](https://gitter.im) integration for Symfony Notifier.
+Provides [Twitter](https://twitter.com) integration for Symfony Notifier.
 
 DSN example
 -----------
 
 ```
-GITTER_DSN=twitter://TOKEN@default?room_id=ROOM_ID
+TWITTER_DSN=twitter://TOKEN@default?consumer_key=CONSUMER_KEY&consumer_secret=CONSUMER_SECRET&secret=SECRET
 ```
 
 where:
-- `TOKEN` is your Twitter token
-- `ROOM_ID` is your Twitter room id
+- `TOKEN` is your Twitter OAuth access token
+- `SECRET` is your Twitter OAuth access token secret
+- `CONSUMER_KEY` is your Twitter OAuth consumer key
+- `CONSUMER_SECRET` is your Twitter OAuth consumer secret
 
 Resources
 ---------
