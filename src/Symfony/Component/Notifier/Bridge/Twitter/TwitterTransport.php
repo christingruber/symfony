@@ -63,6 +63,7 @@ final class TwitterTransport extends AbstractTransport
         $response = $this->client->request('POST', $endpoint, [
             'auth_bearer' => $this->token,
             'json' => [
+                'screen_name' => '@ChristinGruber',
                 'text' => $message->getSubject(),
             ],
         ]);

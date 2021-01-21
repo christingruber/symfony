@@ -108,6 +108,10 @@ class UnsupportedSchemeException extends LogicException
             'class' => Bridge\Gitter\GitterTransportFactory::class,
             'package' => 'symfony/gitter-notifier',
         ],
+        'twitter' => [
+            'class' => Bridge\Twitter\TwitterTransportFactory::class,
+            'package' => 'symfony/twitter-notifier',
+        ],
     ];
 
     /**

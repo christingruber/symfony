@@ -128,6 +128,7 @@ use Symfony\Component\Notifier\Bridge\Slack\SlackTransportFactory;
 use Symfony\Component\Notifier\Bridge\Smsapi\SmsapiTransportFactory;
 use Symfony\Component\Notifier\Bridge\Telegram\TelegramTransportFactory;
 use Symfony\Component\Notifier\Bridge\Twilio\TwilioTransportFactory;
+use Symfony\Component\Notifier\Bridge\Twitter\TwitterTransportFactory;
 use Symfony\Component\Notifier\Bridge\Zulip\ZulipTransportFactory;
 use Symfony\Component\Notifier\Notifier;
 use Symfony\Component\Notifier\Recipient\Recipient;
@@ -2249,6 +2250,7 @@ class FrameworkExtension extends Extension
             OctopushTransportFactory::class => 'notifier.transport_factory.octopush',
             MercureTransportFactory::class => 'notifier.transport_factory.mercure',
             GitterTransportFactory::class => 'notifier.transport_factory.gitter',
+            TwitterTransportFactory::class => 'notifier.transport_factory.twitter',
         ];
 
         foreach ($classToServices as $class => $service) {
